@@ -52,13 +52,13 @@ mysql_variables =
 }
 mysql_replication_hostgroups =
 (
-    { writer_hostgroup=0 , reader_hostgroup=10 , comment="host groups" }
+#    { writer_hostgroup=0 , reader_hostgroup=10 , comment="host groups" }
 )
 
 mysql_servers =
 (
     { address="127.0.0.1" , port=3306 , hostgroup=0, max_connections=400 , max_replication_lag = 50, weight = 1 , comment = "MySQl server Zabbix" }
-#    ,{ address="127.0.0.1" , port=6090 , hostgroup=10, max_connections=400 , max_replication_lag = 50, weight = 10 , comment = "Clickhouse Zabbix" }
+#   ,{ address="127.0.0.1" , port=3306 , hostgroup=10, max_connections=400 , max_replication_lag = 50, weight = 10 }
 )
 
 mysql_query_rules =
@@ -74,7 +74,7 @@ mysql_query_rules =
         rule_id=20
         active=1
         match_pattern="^SELECT .*"
-        destination_hostgroup=10
+        destination_hostgroup=0
         apply=1
     },
     {
@@ -88,7 +88,8 @@ mysql_query_rules =
 
 mysql_users =
 (
-   { username = "root" , password = "5Rcwb0qgBJ50lAAyEsG9" , default_hostgroup = 0 , active = 1, transaction_persistent = 1  },
-   { username = "click", password = "DerfliovDFdr#" , default_hostgroup = 10, active = 1, transaction_persistent = 1  }
+   { username = "root" , password = "FkgkuiebCbFxld322#" , default_hostgroup = 0 , active = 1, transaction_persistent = 1  },
+   { username = "click", password = "DerfliovDFdr#" , default_hostgroup = 0, active = 1, transaction_persistent = 1  },
+   { username = "zabbix", password = "Jlsdfmewr9Ndlr1oP#" , default_hostgroup = 0, active = 1, transaction_persistent = 1  }
 )
 
