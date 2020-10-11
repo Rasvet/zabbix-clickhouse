@@ -137,11 +137,10 @@ services:
   client:
     image: docker.io/yandex/clickhouse-client:20.9.3
     command: ['--host', 'server']
-version: '3.5'
-services:
+
   proxysql:
 #    image: "docker.io/severalnines/proxysql:2.0"
-    image: docker.io/proxysql/proxysql:2.0.14
+    image: docker.io/severalnines/proxysql:2.0.14
     container_name: proxysql
     hostname: proxysql
     restart: always
