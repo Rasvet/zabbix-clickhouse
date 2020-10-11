@@ -1,0 +1,94 @@
+datadir="/var/lib/proxysql"
+errorlog="/var/lib/proxysql/proxysql.log"
+admin_variables=
+{
+    refresh_interval=2000
+    admin_credentials="admin:admin;cluster1:secret1pass"
+    mysql_ifaces="0.0.0.0:6032"
+    cluster_username="cluster1"
+    cluster_password="secret1pass"
+    cluster_check_interval_ms=200
+    cluster_check_status_frequency=100
+    cluster_mysql_query_rules_save_to_disk=true
+    cluster_mysql_servers_save_to_disk=true
+    cluster_mysql_users_save_to_disk=true
+    cluster_proxysql_servers_save_to_disk=true
+    cluster_mysql_query_rules_diffs_before_sync=3
+    cluster_mysql_servers_diffs_before_sync=3
+    cluster_mysql_users_diffs_before_sync=3
+    cluster_proxysql_servers_diffs_before_sync=3
+}
+proxysql_servers =
+(
+    {
+        hostname="10.62.229.162"
+        port=6032
+        comment="proxysql-mon01"
+    }
+)
+
+mysql_variables =
+{
+    threads=4
+    max_connections=2048
+    default_query_delay=0
+    default_query_timeout=36000000
+    have_compress=true
+    poll_timeout=2000
+    interfaces="0.0.0.0:6033;/tmp/proxysql.sock"
+    default_schema="information_schema"
+    stacksize=1048576
+    server_version="8.0.19"
+    connect_timeout_server=10000
+    monitor_history=60000
+    monitor_connect_interval=200000
+    monitor_ping_interval=200000
+    ping_interval_server_msec=10000
+    ping_timeout_server=200
+    commands_stats=true
+    sessions_sort=true
+    monitor_username="proxysql"
+    monitor_password="ProxysqlMonitor#"
+}
+mysql_replication_hostgroups =
+(
+    { writer_hostgroup=0 , reader_hostgroup=10 , comment="host groups" }
+)
+
+mysql_servers =
+(
+    { address="10.62.229.162" , port=3306 , hostgroup=0, max_connections=400 , max_replication_lag = 50, weight = 1 , comment = "MySQl server Zabbix" },
+    { address="10.62.229.162" , port=6090 , hostgroup=10, max_connections=400 , max_replication_lag = 50, weight = 10 , comment = "Clickhouse Zabbix" }
+)
+
+mysql_query_rules =
+(
+ {
+        rule_id=10
+        active=1
+        match_pattern="^SELECT .* FOR UPDATE"
+        destination_hostgroup=0
+        apply=1
+    },
+    {
+        rule_id=20
+        active=1
+        match_pattern="^SELECT .*"
+        destination_hostgroup=10
+        apply=1
+    },
+    {
+        rule_id=30
+        active=1
+        match_pattern=".*"
+        destination_hostgroup=0
+        apply=1
+    }
+)
+
+mysql_users =
+(
+   { username = "root" , password = "5Rcwb0qgBJ50lAAyEsG9" , default_hostgroup = 0 , active = 1, transaction_persistent = 1  },
+   { username = "click", password = "DerfliovDFdr#" , default_hostgroup = 10, active = 1, transaction_persistent = 1  }
+)
+

@@ -1,0 +1,119 @@
+version: "3.5"
+volumes:
+  mysql_db:
+    external: true
+services:
+  zabbix-server-mysql:
+    environment:
+      - DB_SERVER_HOST=10.62.229.162
+      - DB_SERVER_PORT=3306
+      - MYSQL_DATABASE=${MYSQL_DB}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_USER_PASS}
+      - ZBX_STARTPOLLERS=5
+      - ZBX_IPMIPOLLERS=0
+      - ZBX_STARTPOLLERSUNREACHABLE=5
+      - ZBX_STARTPINGERS=0
+      - ZBX_STARTDISCOVERERS=0
+      - ZBX_STARTHTTPPOLLERS=0
+      - ZBX_STARTJAVAPOLLERS=0
+      - ZBX_STARTVMWARECOLLECTORS=0
+      - ZBX_ENABLE_SNMP_TRAPS=false
+      - ZBX_CACHESIZE=32M
+      - ZBX_VALUECACHESIZE=512M
+      - ZBX_PROXYCONFIGFREQUENCY=300
+      - ZBX_STARTPROXYPOLLERS=3
+    container_name: zabbix-server-mysql
+    image: docker.io/zabbix/zabbix-server-mysql:alpine-5.0.4
+#    network_mode: host
+    ports:
+      - "10051:10051"
+    ulimits:
+      nproc: 65536
+      nofile:
+        soft: 65536
+        hard: 65536
+    restart: unless-stopped
+#    extra_hosts:
+#      - "sys.local:192.168.226.60"
+    depends_on:
+      - mysql-server
+
+  zabbix-web-nginx:
+    environment:
+      - DB_SERVER_HOST=10.62.229.162
+      - DB_SERVER_PORT=3306
+      - MYSQL_DATABASE=${MYSQL_DB}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_USER_PASS}
+      - ZBX_SERVER_HOST=10.62.229.162
+      - PHP_TZ=Europe/Moscow
+      - ZBX_SERVER_NAME=TNOP02
+    container_name: zabbix-web-nginx
+    image:  docker.io/zabbix/zabbix-web-nginx-mysql:alpine-5.0.4
+    ports:
+      - 81:8080
+#    network_mode: host
+    ulimits:
+      nproc: 65536
+      nofile:
+        soft: 65536
+        hard: 65536
+    restart: unless-stopped
+#    extra_hosts:
+#      - "sys.local:192.168.226.60"
+    depends_on:
+      - mysql-server
+
+  mysql-server:
+    image: docker.io/mysql:8.0
+    ulimits:
+      nproc: 65536
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - SYS_NICE  # CAP_SYS_NICE
+    restart: on-failure
+    container_name: mysql-server-80
+    command: --default_authentication_plugin=mysql_native_password
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_USER_PASS}
+      - MYSQL_DATABASE=${MYSQL_DB}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_CHARSET=utf8mb4
+      - MYSQL_COLLATION=utf8mb4_unicode_ci
+      - MYSQL_LOWER_CASE_TABLE_NAMES=1
+      - MYSQL_MAX_CONNECTIONS=50
+      - MYSQL_BINLOG_FORMAT=row
+      - MYSQL_DEFAULT_AUTHENTICATION_PLUGIN=mysql_native_password
+#      - MYSQL_DEFAULTS_FILE=/etc/mysql/my.cnf
+#      - MYSQL_TABLE_OPEN_CACHE: 400
+#MYSQL_KEY_BUFFER_SIZE (default: 32M or 10% of available memory)
+#MYSQL_SORT_BUFFER_SIZE (default: 256K)
+#MYSQL_READ_BUFFER_SIZE (default: 8M or 5% of available memory)
+      - MYSQL_INNODB_BUFFER_POOL_SIZE=8G
+      - MYSQL_LOG_ERROR_VERBOSITY=3
+#MYSQL_INNODB_LOG_FILE_SIZE (default: 8M or 15% of available memory)
+#MYSQL_INNODB_LOG_BUFFER_SIZE (default: 8M or 15% of available memory)
+#MYSQL_DEFAULTS_FILE (default: /etc/my.cnf)
+#MYSQL_LOG_QUERIES_ENABLED (default: 0)
+#To enable query logging set this to 1
+#/var/lib/mysql/data
+#MySQL data directory
+    ports:
+      - "3306:3306"
+      - "33068:33068"
+      - "33060:33060"
+    volumes:
+      - mysql_db:/var/lib/mysql
+#      - ./mysql/my.cnf:/etc/mysql/my.cnf:ro
+#    networks:
+#      - mysql-net
+#    network_mode: host
+#опция мапит все порты на локальный хост, менять порт mysql на незанятый    
+#    privileged: true
+    userns_mode: 'host'
+    security_opt:
+      - seccomp:unconfined
