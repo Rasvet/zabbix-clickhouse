@@ -57,8 +57,8 @@ mysql_replication_hostgroups =
 
 mysql_servers =
 (
-    { address="10.62.229.162" , port=3306 , hostgroup=0, max_connections=400 , max_replication_lag = 50, weight = 1 , comment = "MySQl server Zabbix" },
-    { address="10.62.229.162" , port=6090 , hostgroup=10, max_connections=400 , max_replication_lag = 50, weight = 10 , comment = "Clickhouse Zabbix" }
+    { address="127.0.0.1" , port=3306 , hostgroup=0, max_connections=400 , max_replication_lag = 50, weight = 1 , comment = "MySQl server Zabbix" },
+    { address="127.0.0.1" , port=6090 , hostgroup=10, max_connections=400 , max_replication_lag = 50, weight = 10 , comment = "Clickhouse Zabbix" }
 )
 
 mysql_query_rules =

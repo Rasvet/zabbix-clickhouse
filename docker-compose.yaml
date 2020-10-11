@@ -111,7 +111,8 @@ services:
       - "33060:33060"
     hostname: mysql
     volumes:
-      - mysql_db:/var/lib/mysql
+#      - mysql_db:/var/lib/mysql
+      - /data/mysql:/var/lib/mysql:rw,z
 #      - ./mysql/my.cnf:/etc/mysql/my.cnf:ro
 #    networks:
 #      - mysql-net
@@ -133,7 +134,7 @@ services:
        soft: 262144
        hard: 262144
     volumes:
-      - /data/clickhouse:/var/lib/clickhouse
+      - /data/clickhouse:/var/lib/clickhouse:rw,z
     restart: always
     hostname: clickhouse
   clickhouse-client:

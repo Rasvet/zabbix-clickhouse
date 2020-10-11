@@ -1,4 +1,5 @@
+
 # Used by monitoring module for connection health
-CREATE USER monitor@'%' IDENTIFIED BY 'monitor';
-GRANT ALL PRIVILEGES ON test.* TO 'monitor'@'%';
+CREATE USER IF NOT EXISTS monitor@'%' IDENTIFIED BY '"ProxysqlMonitor#';
+GRANT ALL PRIVILEGES ON meta.* TO 'monitor'@'%';
 FLUSH PRIVILEGES;
