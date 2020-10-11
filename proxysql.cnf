@@ -18,14 +18,14 @@ admin_variables=
     cluster_mysql_users_diffs_before_sync=3
     cluster_proxysql_servers_diffs_before_sync=3
 }
-proxysql_servers =
-(
-    {
-        hostname="10.62.229.162"
-        port=6032
-        comment="proxysql-mon01"
-    }
-)
+#@proxysql_servers =
+#@(
+#    {
+#        hostname="10.62.229.162"
+#        port=6032
+#        comment="proxysql-mon01"
+#    }
+#)
 
 mysql_variables =
 {
@@ -57,8 +57,8 @@ mysql_replication_hostgroups =
 
 mysql_servers =
 (
-    { address="127.0.0.1" , port=3306 , hostgroup=0, max_connections=400 , max_replication_lag = 50, weight = 1 , comment = "MySQl server Zabbix" },
-    { address="127.0.0.1" , port=6090 , hostgroup=10, max_connections=400 , max_replication_lag = 50, weight = 10 , comment = "Clickhouse Zabbix" }
+    { address="127.0.0.1" , port=3306 , hostgroup=0, max_connections=400 , max_replication_lag = 50, weight = 1 , comment = "MySQl server Zabbix" }
+#    ,{ address="127.0.0.1" , port=6090 , hostgroup=10, max_connections=400 , max_replication_lag = 50, weight = 10 , comment = "Clickhouse Zabbix" }
 )
 
 mysql_query_rules =
