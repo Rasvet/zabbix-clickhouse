@@ -1,7 +1,7 @@
 version: "3.5"
-volumes:
-  mysql_db:
-    external: true
+#volumes:
+#  mysql_db:
+#    external: true
 services:
   zabbix-server-mysql:
     environment:
@@ -24,7 +24,7 @@ services:
       - ZBX_PROXYCONFIGFREQUENCY=300
       - ZBX_STARTPROXYPOLLERS=3
     container_name: zabbix-server-mysql
-    image: docker.io/zabbix/zabbix-server-mysql:alpine-5.0.4
+    image: docker.io/zabbix/zabbix-server-mysql:alpine-${ZBX_SERVER_VER}
 #    network_mode: host
     ports:
       - "10051:10051"
@@ -48,10 +48,10 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_USER_PASS}
       - ZBX_SERVER_HOST=${ZBX_SERVER_HOST}
-      - PHP_TZ=Asia/Vladivostok
-      - ZBX_SERVER_NAME=TEST Zabbix Server
+      - PHP_TZ=${ZBX_TIMEZONE}
+      - ZBX_SERVER_NAME=${ZBX_SERVER_NAME}
     container_name: zabbix-web-nginx
-    image:  docker.io/zabbix/zabbix-web-nginx-mysql:alpine-5.0.4
+    image:  docker.io/zabbix/zabbix-web-nginx-mysql:alpine-${ZBX_SERVER_VER}
     ports:
       - 80:8080
 #    network_mode: host
@@ -123,7 +123,7 @@ services:
     security_opt:
       - seccomp:unconfined
   clickhouse-server:
-    image: docker.io/yandex/clickhouse-server:20.9.3
+    image: docker.io/yandex/clickhouse-server:${CLICK_VER}
     ports:
      - "8123:8123"
      - "9000:9000"
@@ -138,7 +138,7 @@ services:
     restart: always
     hostname: clickhouse
   clickhouse-client:
-    image: docker.io/yandex/clickhouse-client:20.9.3
+    image: docker.io/yandex/clickhouse-client:${CLICK_VER}
     command: ['--host', 'server']
 
   proxysql:
@@ -147,6 +147,7 @@ services:
     container_name: proxysql
     hostname: proxysql
     restart: unless-stopped
+#    command: --clcikhouse
     depends_on:
       - mysql-server
       - clickhouse-server
